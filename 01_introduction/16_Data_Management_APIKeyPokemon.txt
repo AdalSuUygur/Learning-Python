@@ -1,0 +1,18 @@
+{
+  "abilities": [ ... ],
+  "base_experience": 112,
+  "forms": [ ... ],
+  "height": 4,
+  "id": 25,
+  "is_default": true,
+  "location_area_encounters": "...",
+  "moves": [ ... ],
+  "name": "pikachu",  <-- İŞTE BURADA!
+  "order": 35,
+  "past_types": [],
+  "species": { ... },
+  "sprites": { ... },
+  "stats": [ ... ],
+  "types": [ ... ],
+  "weight": 60
+}
