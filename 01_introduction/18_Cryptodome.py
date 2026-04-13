@@ -9,48 +9,48 @@
 
 #* OS --> Oparating System
 
-# #region Dosya Açma ve İçerisine Bilgi Yazma
-# try:
-#     file = open(file='new_file.txt', mode='w', encoding='utf-8') #Yaratıcı dosyaya isim verdik, mode verdik (yazma amaçlı ondan write'in w'si)
-#     # Burdaki encoding de TR karakterlere duyarlı olması için
-#     file.write('Name: Adal Su\nOccupation: Developer\n') #Yazdırdık
-#     file.close()
-# except FileExistsError as err: #Kendine has exceptionları
-#     print(err)
-# except FileNotFoundError as err:
-#     print(err)
-# #* Bu işlem sonucunda "new_file.txt" adında bir dosya SKILLEDHUB_3 Workspaceine eklenecek ve içerisinde Adal Su Developer yazılmış olacak.
-# #* Hali hazırda aynı isimde bir dosya varsa tekrar yaratmaz.
-# #endregion
-
-# #region Dosya Yeni Bilgi Yazma
-# try:
-#     file = open(file='new_file.txt', mode='a', encoding='utf-8') # append'in a'sını seçtik mode olarak.
-#     file.write('Full Name: İpek Yılmaz\nOccupation: Art Historian\n')
-#     file.close()
-# except FileExistsError as err:
-#     print(err)
-# except FileNotFoundError as err:
-#     print(err)
-# #endregion
-
-# #region Dosyadan Veri Okuma
-# try:
-#     file = open(file='new_file.txt', mode='r', encoding='utf-8') #mode'umuz read kelimesinin r'si.
-#     for line in file.readlines():
-#         print(line)
-#     file.close()
-# except FileExistsError as err:
-#     print(err)
-# except FileNotFoundError as err:
-#     print(err)
-# #endregion
-
-# #* Open'ın ikinci bir şekilde açılması, bunda ayrıca dosyayı kapatmaya gerek duymuyor (RAM efficiency)
-# with open(file='new_file.txt', mode='a', encoding='utf-8') as file:
-#     file.write('Full Name: Hakan Yılmaz\nOccupation: Chemist\n')
-
+#region Dosya Açma ve İçerisine Bilgi Yazma
+try:
+    file = open(file='new_file.txt', mode='w', encoding='utf-8') #Yaratıcı dosyaya isim verdik, mode verdik (yazma amaçlı ondan write'in w'si)
+    # Burdaki encoding de TR karakterlere duyarlı olması için
+    file.write('Name: Adal Su\nOccupation: Developer\n') #Yazdırdık
+    file.close()
+except FileExistsError as err: #Kendine has exceptionları
+    print(err)
+except FileNotFoundError as err:
+    print(err)
+#* Bu işlem sonucunda "new_file.txt" adında bir dosya SKILLEDHUB_3 Workspaceine eklenecek ve içerisinde Adal Su Developer yazılmış olacak.
+#* Hali hazırda aynı isimde bir dosya varsa tekrar yaratmaz.
 #endregion
+
+#region Dosya Yeni Bilgi Yazma
+try:
+    file = open(file='new_file.txt', mode='a', encoding='utf-8') # append'in a'sını seçtik mode olarak.
+    file.write('Full Name: İpek Yılmaz\nOccupation: Art Historian\n')
+    file.close()
+except FileExistsError as err:
+    print(err)
+except FileNotFoundError as err:
+    print(err)
+#endregion
+
+#region Dosyadan Veri Okuma
+try:
+    file = open(file='new_file.txt', mode='r', encoding='utf-8') #mode'umuz read kelimesinin r'si.
+    for line in file.readlines():
+        print(line)
+    file.close()
+except FileExistsError as err:
+    print(err)
+except FileNotFoundError as err:
+    print(err)
+#endregion
+
+#* Open'ın ikinci bir şekilde açılması, bunda ayrıca dosyayı kapatmaya gerek duymuyor (RAM efficiency)
+with open(file='new_file.txt', mode='a', encoding='utf-8') as file:
+    file.write('Full Name: Hakan Yılmaz\nOccupation: Chemist\n')
+
+# endregion
 
 #region Crypto Modülü
 

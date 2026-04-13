@@ -61,25 +61,25 @@ a1.tork = 1000                                  # Özelliği değiştirme
 
 # Siz yazsanız da yazmasanız da bu fonksiyon her nesne yaratılışında çalışır ve sınıfı RAM'e çıkartır. Ancak bazı özellikleri nesne yaratılırken zorunlu tutmak istiyorsak, bu fonksiyonu **customize** ederiz (özelleştiririz).
 
+# Student Sınıfı Örneği
 
-# ### Student Sınıfı Örneği
+# Eğer `__init__` fonksiyonunu özelleştirip parametreler eklersek (örneğin bir öğrenci için `Ad` ve `ID`), 
+# nesne üretirken bu bilgileri girmek zorunlu hale gelir. Aksi takdirde hata alırız.
 
-# ```python
-# class Student:
-#     taken_courses = [] # Class Attribute
+class Student:
+    taken_courses = [] # Class Attribute
 
-#     def __init__(self, full_name, student_id):
-#         # Object Attributes
-#         self.tamat = full_name
-#         self.ogrenci_id = student_id
-# ```
+    def __init__(self, full_name, student_id):
+        # Object Attributes
+        self.tamat = full_name
+        self.ogrenci_id = student_id
+# Buradaki `self` ifadesi, yaratılan objenin kendisini temsil eder. Sınıfın içine doğrudan yazdığımız özelliklere **Class Attribute**, `__init__` içinde `self` ile tanımladıklarımıza ise **Object Attribute** diyoruz. Class attribute'lar sınıf yaratıldığı anda mevcuttur; ancak object attribute'lar sadece nesne üretildiği anda (*run-time*) oluşur.
 
 # `__init__` fonksiyonunun üç temel görevi vardır:
 # 1. Sınıfı başlatmak (initialize etmek).
 # 2. Nesnenin belirli özelliklerle (örneğin isim ve ID) yaratılmasını zorunlu tutmak.
 # 3. Dışarıdan gelen bu değerleri nesneye ait özellikler olarak atamak.
 
-# Buradaki `self` ifadesi, yaratılan objenin kendisini temsil eder. Sınıfın içine doğrudan yazdığımız özelliklere **Class Attribute**, `__init__` içinde `self` ile tanımladıklarımıza ise **Object Attribute** diyoruz. Class attribute'lar sınıf yaratıldığı anda mevcuttur; ancak object attribute'lar sadece nesne üretildiği anda (*run-time*) oluşur.
 
 # ---
 
