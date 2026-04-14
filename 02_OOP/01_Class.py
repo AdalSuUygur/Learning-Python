@@ -46,6 +46,7 @@ print(favori_driver.name)
 
 # Special fonksiyonlar tüm sınıflarda ortak olarak bulunmaktadır.
 
+#region Constructor (Yapıcı Fonksiyon): `__init__`
 #? Constructor (Yapıcı Fonksiyon): `__init__`
 #* Nesne türetilirken arka planda otomatik olarak çalışan özel bir fonksiyon vardır. 
 #* Diğer programlama dillerinde buna **Constructor** (yapıcı fonksiyon) denir.
@@ -67,7 +68,43 @@ class Student:
 
 s1 = Student(full_name="adal su uygur", student_id="12345")
 print(s1.__dict__) #sözlük olarak yazdırmamızı sağlıyor.
+#endregion
 
+#region Self Anahtar Kelimesi
+#? Self Anahtar Kelimesi
+# `__init__` veya sınıf içindeki diğer fonksiyonlarda kullandığımız `self` Keyword: Sınıf içerisinde, yaratılacak olan o anki *objeyi* temsil eder.
+# O an işlem yapılan nesne ne ise self odur. 
+# Başka isimler verilebilir ancak "best practice" (en iyi uygulama) olarak self kullanılması önerilir.
+# Neden Kullanılır? Sınıfın yeteneklerine (methods) ve özelliklerine (attributes) erişmek için kullanılır.
+
+#todo `Circle` Classı ve üretilen objeleri
+
+#* Attribute Ayrımı: `Pi` sayısı sabittir, `Class Attribute` yapılır. `radius` (yarıçap) değişkendir, `Object Attribute` yapılır.
+#* Erişim: Obje, sınıfın tüm özelliklerine sahiptir. `self.Pi` diyerek de sınıf özelliğine erişilebilir.
+
+class Circle:
+    pi = 3.14
+
+    def __init__(self, r: int): #dışarıdan bir r değeri gelcek
+        """buraya da dökümantasyon yapılabilir
+        """
+        self.radius = r #self yaratılan objeyi temsil eder
+
+#circle sınıfına 2 tane daha kabiliyet verelim: 
+    def calculate_area(self):
+        return self.pi * self.radius **2
+    
+    def calculate_perimeter(self):
+        return 2 * self.pi * self.radius
+
+c1 = Circle(r = 1.02) #instance alıyoruz yani obje yaratıyoruz ve bu bizden bir yarıçap bekliyor.
+#* self ile aslında yaratılan obje (çember) temsil edilir. Artık ismi ne olursa (bu örnekte self aslında c1)
+
+print(c1.calculate_area()) #bunlara nokta notasyonu ile eriştik.
+
+#endregion
+
+#region Class vs. Object Attributes
 #? Attributes: Class vs. Object Attributes
 # OOP yapısında verilerin nerede tutulduğu kritiktir. İki tür özellik tanımlaması mevcuttur:
 #* Class Attribute: Sınıf seviyesinde tanımlanır. O sınıftan türetilen **tüm** objeler tarafından ortaklaşa paylaşılır.
@@ -108,146 +145,129 @@ print(s2.__dict__)
 # '__str__', '__subclasshook__', '__weakref__', 'ogrenci_id', 'taken_courses', 'tam_ad']
 #* Bunlar da object attributes, farkları ne? bak classta sadece taken_courses varken burda alayı var.
 
-#? Self Anahtar Kelimesi
-# `__init__` veya sınıf içindeki diğer fonksiyonlarda kullandığımız `self` Keyword: Sınıf içerisinde, yaratılacak olan o anki **objeyi temsil eder**.
-# O an işlem yapılan nesne ne ise `self` odur. 
-# Başka isimler verilebilir ancak "best practice" (en iyi uygulama) olarak `self` kullanılması önerilir.
-# Neden Kullanılır? Sınıfın yeteneklerine (methods) ve özelliklerine (attributes) erişmek için kullanılır.
+#todo Department Example (Sayaç Mantığı) 
+#todo Bir departmandaki çalışan sayısını takip etmek için yapılan hata ve doğru kullanım
+# Senaryo: Department sınıfı her örneklendiğinde çalışan sayısını artırmak istiyoruz.
 
-#todo `Circle` Classı ve üretilen objeleri
+#? Hatalı Kullanım (self ile Erişim):
+#* self.employee_count += 1 derseniz, yaratılan her yeni örneklemde için employee_count değeri sıfırlanıp 1 olur. 
+#* Çünkü self o anki yeni, taze objeyi (fresh instance) temsil eder.
+#? Doğru Kullanım (Class Name ile Erişim):
+#* `Department.employee_count += 1` kullanılmalıdır. Bu sayede RAM'de tek bir yerde tutulan ortak sınıf özelliğine erişilir ve sayaç kümülatif olarak (1, 2, 3...) artar.
 
-#* Attribute Ayrımı: `Pi` sayısı sabittir, `Class Attribute` yapılır. `radius` (yarıçap) değişkendir, `Object Attribute` yapılır.
-#* Erişim: Obje, sınıfın tüm özelliklerine sahiptir. `self.Pi` diyerek de sınıf özelliğine erişilebilir.
+class Department:
 
-class Circle:
-    pi = 3.14
-
-    def __init__(self, r: int): #dışarıdan bir r değeri gelcek
-        """buraya da dökümantasyon yapılabilir
-        """
-        self.radius = r #self yaratılan objeyi temsil eder
-
-#circle sınıfına 2 tane daha kabiliyet verelim: 
-    def calculate_area(self):
-        return self.pi * self.radius **2
+    #Bunlar class attributes üretir
+    department_name = ""
+    employee_count = 0
     
-    def calculate_perimeter(self):
-        return 2 * self.pi * self.radius
+    def __init__(self, name: str, age: int):
+        self.adi = name # türkçe obje attribute'u, ingilizce dışardan gelen attribute.
+        # yani bu sınıftan örneklem aldığımda bunlar yaratılacak (runtime olarak)
+        self.yasi = age
+        #? Hatalı Kullanım (self ile Erişim)
+        # self.employee_count += 1 
+        # burda self ile çağırdığımızda hep her seferinde 0dan başlatıldığı için çıktı olarak 1 1 1 olarak verdi
 
-c1 = Circle(r = 1.02) #instance alıyoruz yani obje yaratıyoruz ve bu bizden bir yarıçap bekliyor.
-print(c1.calculate_area()) #bunlara nokta notasyonu ile eriştik.
+        #? Doğru Kullanım (Class Name ile Erişim):
+        Department.employee_count += 1
+        # Çıktı +1 olarak artarak ilerler.
 
+    def show_info(self):
+        print(
+            f"Name: {self.adi}\n"
+            f"Age: {self.yasi}\n"
+            f"Department Name: {self.department_name}"
+        )
 
-# #region Examples
+    #her instance alındığında (obje çağrıldığında/yaratıldığında) employee sayısını bir artırmış olduk.
+    def show_employee_count(self):
+        print(f"Total employee: {self.employee_count}")
 
-# #todo Kendi sınıf tanımlamam:
-# class Character:
-#     age = 29
-#     skin_tone = "Yellow"
-#     hair = 0
-#     accesories = "earrings"
+d1 = Department("Adal", 29)
+d1.department_name = "Data"
+d1.show_info()
+d1.show_employee_count()
 
-# cagirma_nesnem = Character() #sınıftan örneklem çıkartıyoruz
-# cagirma_nesnem.age = 86 #nokta notasyonu ile obje üzerinden sınıfın özelliklerine erişiyoruz
-# print(cagirma_nesnem.age)
+d2 = Department("Yasemin", 34)
+d2.department_name = "Philosophy"
+d2.show_info()
+d2.show_employee_count()
 
+d3 = Department("Habiba", 36)
+d3.department_name = "English"
+d3.show_info()
+d3.show_employee_count()
 
-# #todo Department Example (Sayaç Mantığı) Bir departmandaki çalışan sayısını takip etmek için yapılan hata ve doğru kullanım
-# # 1. Senaryo: `Department` sınıfı her örneklendiğinde çalışan sayısını artırmak istiyoruz.
-# # 2. Hatalı Kullanım (`self` ile Erişim):
-# #* `self.employee_count += 1` derseniz, her yeni obje için `employee_count` değeri sıfırlanıp 1 olur. Çünkü `self` o anki yeni, taze objeyi (fresh instance) temsil eder.
-# # 3. **Doğru Kullanım (`Class Name` ile Erişim):**
-# #* `Department.employee_count += 1` kullanılmalıdır. Bu sayede RAM'de tek bir yerde tutulan ortak sınıf özelliğine erişilir ve sayaç kümülatif olarak (1, 2, 3...) artar.
+#* Department.employee_count` yani sınıf ismi üzerinden çağırırsam, o zaman her seferinde yeni yaratılan alan değil, sınıfın ortak alanı artar; 1, 2, 3 diye devam eder. 
+#* İşte bu, self`in objeyi temsil ettiğinin ispatıdır. 
+#* self dersen her obje kendi dünyasında yaşar; class ismiyle çağırırsan o sınıfın tüm üyeleri için ortak olan değeri değiştirirsin.
 
-# class Department:
+#endregion
 
-#     #Bunlar class attributes üretir
-#     department_name = ""
-#     employee_count = 0
+#region Examples
+
+#todo Kendi sınıf tanımlamam:
+class Character:
+    def __init__(self, name: str): #isim olmadan karakter olmaz.
+        self.age = 29
+        self.skin_tone = "Yellow"
+        self.hair = "Brown"
+
+cagirma_nesnem = Character(name="Adal") #sınıftan örneklem çıkartıyoruz
+
+print(cagirma_nesnem.age) #buradaki self değerleri aslında şuanki örneklem yani cagirma_nesnem i temsil ediyor. Ki age yazıldığında 29 çıktısını veriyor.
+
+cagirma_nesnem.age = 86 #nokta notasyonu ile obje üzerinden sınıfın özelliklerine erişiyoruz
+print(cagirma_nesnem.age)
+
+#* Kendi nesnelerimizi yaratmak için:
+# 1. Önce yaratılmak istenen nesnenin özelliklerine sahip bir sınıf yazılır.
+# 2. Değişken tanımlar gibi, nesne özellikleri sınıfın içinde tanımlanır.
+# 3. Yaratılan sınıftan örneklem(instance) alınır.
+
+#todo Kodlama Challenge: Software Developer Sınıfı
+#todo hatalı kullanım ile aslında class attributes üzerine tartışma örneği
+
+# Task: Bir SoftwareDeveloper sınıfı yaratalım. 
+# first_name ve last_name object attribute olacak.
+# knowledge_languages bir liste olacak ve başlangıçta class attribute olarak tanımlansın (üzerine tartışacağız).
+# add_new_language diye bir fonksiyonumuz olacak. Bu fonksiyona string olarak "Python, C#, Go" gibi diller gelebilir. Bunları parçalayıp listeye ekleyeceksiniz.
+# show_info fonksiyonu ile kişinin adını, soyadını ve bildiği dilleri ekrana basacağız.
+
+class SoftwareDeveloper:
     
-#     def __init__(self, name: str, age: int):
-#         self.adi = name # türkçe obje attribute'u, ingilizce dışardan gelen attribute.
-#         # yani bu sınıftan örneklem aldığımda bunlar yaratılacak (runtime olarak)
-#         self.yasi = age
-#         # self.employee_count += 1 
-#         # burda self ile çağırdığımızda hep her seferinde 0dan başlatıldığı için çıktı olarak 1 1 1 olarak verdi
-
-#         # Department'ın employee count'ını çağırdığımızda:
-#         Department.employee_count += 1
-#         # Çıktı +1 olarak artarak ilerler.
-
-#     def show_info(self):
-#         print(
-#             f"Name: {self.adi}\n"
-#             f"Age: {self.yasi}\n"
-#             f"Department Name: {self.department_name}"
-#         )
-
-#     #her instance alındığında (obje çağrıldığında/yaratıldığında) employee sayısını bir artırmış olduk.
-
-#     def show_employee_count(self):
-#         print(f"Total emplotee: {self.employee_count}")
-
-# d1 = Department("Adal", 29)
-# d1.department_name = "YZTA"
-# d1.show_info()
-# d1.show_employee_count()
-
-# d2 = Department("Yasemin", 34)
-# d2.department_name = "Teacher"
-# d2.show_info()
-# d2.show_employee_count()
-
-# d3 = Department("Habiba", 36)
-# d3.department_name = "Teacher"
-# d3.show_info()
-# d3.show_employee_count()
-
-
-# #todo SoftwareDeveloper Class Challenge: Bir yazılımcı sınıfı oluştururken "Bildiği Diller" listesinin yönetimi üzerine vaka analizi.
-# # Sınıfın: first_name, last_name object attibuteleri olsun
-# # knowledge_languages adlı bir liste class attribute'u olsun
-# #challenge şu, bildiği dilleri bu listeye yazıcaz.
-# #add_new_language() adlı bir fonksiyon olacak.
-# #sample input --- "python, c#, go" veya "python" olarak gelebilir. Buna göre parçalayıp her biri bir item olarak listeye eklenecek.
-
-# #* Problem: `knowledge_languages` listesi Class Attribute mu yoksa Object Attribute mu olmalı?
-
-# class SoftwareDeveloper():
-#     knowledge_languages = [] #class attribute olarak yarattık.
+    knowledge_languages = ["Python", "C#", "Go", "Java"] # Class attributes olarak yarattık.
     
-#     def __init__(self, first_name: str, last_name: str): #bunları obje attribute'u olarak.
-#         self.first_name = first_name
-#         self.last_name = last_name
+    def __init__(self, first_name: str, last_name: str): #örneklem alındığında init tetiklendi.
+        self.first_name = first_name
+        self.last_name = last_name
 
-#     def add_new_language(self, input_language: str):
-#         language_lst = input_language.split(',') #language bize string olarak geliyor ancak bunu bölmemiz gerek.
+    def add_new_language(self, input_language: str):
+        language_lst = input_language.split(',') # language bize string olarak geliyor ancak bunu bölmemiz gerek.
 
-# # Veri İşleme (String Parsing):
-# # Kullanıcıdan gelen "Python, C#, Go" şeklindeki string veriyi işlemek için:
+        for item in language_lst:
+            if item not in self.knowledge_languages:
+                self.knowledge_languages.append(item)
+        return "Language has been added."
 
-# # 1. **Split:** `input_string.split(",")` ile veriyi virgülden bölerek listeye çevir.
-# # 2. **Strip:** Boşlukları temizlemek için `.strip()` kullan.
-# # 3. **Logic:** Tek eleman gelirse direkt ekle, çoklu gelirse döngü ile ekle.
+    def show_info(self):
+        print(
+            f"Name: {self.first_name}\n"
+            f"Surname: {self.last_name}\n"
+            f"Known Languages: {self.knowledge_languages}") # Burda neden "self" şekilde eriştik? Çünkü herkesin bildiği dil kendisine
+        
+    def show_languages(self):
+        print(f"All Languages: {self.knowledge_languages}")
 
-#         for item in language_lst:
-#             if item not in self.knowledge_languages:
-#                 self.knowledge_languages.append(item)
-#         return "Language has been added."
+s1 = SoftwareDeveloper("Adal", "Uygur")
+print(s1.add_new_language("Python, C#, C++, Java"))
+s1.show_info()
+s1.show_languages()
 
+#* Yanlış Yaklaşım (Class Attribute): Eğer liste sınıf seviyesinde tanımlanırsa knowledge_languages = [], append yapılan her dil tüm yazılımcı objelerine eklenir.
+# Ali'nin bildiği dili Veli de biliyor gözükür.
+#* Doğru Yaklaşım (Object Attribute): Her yazılımcının yetkinliği kendine özgü olmalıdır. Bu yüzden __init__ içinde self.knowledge_languages = [] olarak tanımlanmalı.
+# ve her obje için RAM'de taze/boş bir liste açılmalıdır.
 
-#     def show_info(self):
-#         print(
-#             f"Full Name: {self.first_name} {self.last_name}\n"
-#             f"Known Languages: {self.knowledge_languages}" #burda neden bu şekilde eriştik? çünkü herkesin bildiği dil kendisine
-#         )
-
-# s1 = SoftwareDeveloper("Adal", "Uygur")
-# print(s1.add_new_language("python, c#, c++, java, vb.net"))
-# s1.show_info()
-
-# #* Yanlış Yaklaşım (Class Attribute): Eğer liste sınıf seviyesinde tanımlanırsa (`knowledge_languages = []`), `append` yapılan her dil tüm yazılımcı objelerine eklenir. 
-# # Ali'nin bildiği dili Veli de biliyor gözükür.
-# #* Doğru Yaklaşım (Object Attribute): Her yazılımcının yetkinliği kendine özgü olmalıdır. Bu yüzden `__init__` içinde `self.knowledge_languages = []` olarak tanımlanmalı 
-# # ve her obje için RAM'de taze/boş bir liste açılmalıdır.
-# #endregion
+#endregion
