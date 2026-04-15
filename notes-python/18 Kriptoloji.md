@@ -1,7 +1,7 @@
 
 # (Cryptography) CRYPTOGRAPHY (Kriptoloji)
 
-Kriptoloji, en basit tabiriyle **"Veriyi Saklama Bilimi"**dir.
+Kriptoloji, en basit tabiriyle **"Veriyi Saklama Bilimi"** dir.
 
 > **Amaç:** Bir veriyi, sadece anahtarı (şifresi) olan kişinin okuyabileceği, anahtarı olmayanın ise "anlamsız karakter yığını" olarak göreceği bir hale getirmektir.
 

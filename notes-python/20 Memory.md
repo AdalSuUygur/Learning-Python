@@ -1,5 +1,5 @@
 
-# COMPUTER SCIENCE FUNDAMENTALS: MEMORY & OOP
+# MEMORY & OOP
 
 ## Memory Management: Stack vs. Heap (Bellek Mimarisi)
 

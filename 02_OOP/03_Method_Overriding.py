@@ -1,11 +1,13 @@
 
 #! ## Method Overriding
-#* Definition: Ata sınıftan (Parent) miras alınan bir metodun, alt sınıfta (Child) ihtiyaca göre yeniden tanımlanarak davranışının değiştirilmesi veya geliştirilmesidir.
+#* Ata sınıftan (Parent) miras alınan bir metodun, alt sınıfta (Child) ihtiyaca göre yeniden tanımlanarak davranışının değiştirilmesi veya geliştirilmesidir.
 # Keyfi nedenlerle method override edilmez.
 
 # Parentler organize edilirken alt sınıfların ortak özelliklerini barındırır.
-# Amaçları kalıtım vermektir. Bu yüzden instanceları alınmaz.
+# Base class'ların amaçları kalıtım vermektir. Bu yüzden instanceları alınmaz. (bu amaçla kullanılmaz.)
+
 class BaseEntity: #* İsimlendirmenin başında "Base" görünce parent olduğunu anla!
+    # Parent sınıflara sadece ortak olan özellikleri yazılır!
     def __init__(self, name: str, description: str):
         self.name = name
         self.description = description
@@ -16,46 +18,41 @@ class BaseEntity: #* İsimlendirmenin başında "Base" görünce parent olduğun
             f'Description: {self.description}'
         )
 
-#? 1. Enhance (Geliştirme/Genişletme)
+#region Enhance
+#? Enhance (Geliştirme/Genişletme)
 #* Mevcut ata fonksiyonunun yeteneğini koruyup üzerine ekleme yapma işlemidir.
-# * **Key Tool:** `super()` fonksiyonu.
-# * **Usage:** `super().__init__(...)` ile önce atadaki kod çalıştırılır, ardından alt sınıfa özgü kodlar eklenir.
 
-#region Case Study: E-Commerce (Product vs. Category)
-#* **BaseEntity (Parent):** Tüm varlıkların ortak özellikleri olan `name` ve `description` tutulur.
-#* **Category (Child):** Ekstra bir özelliğe ihtiyaç duymaz. Parent'taki `__init__` ve `show_info` yeterlidir. **Override edilmez.**
-
-class Category(BaseEntity): # Alt sınıf
+class Category(BaseEntity): # #Child: Ekstra bir özelliğe ihtiyaç duymaz. Parent'taki __init__ ve show_info yeterlidir. **Override edilmez.**
     pass
 
-class Product(BaseEntity): # Alt sınıf
-    # Ürünlerin price, stock gibi kendine has özellikleri olur.
-    # Kendine has olduğu için alt sınıfa yazıyoruz.
+class Product(BaseEntity): #Child: price ve stock gibi kendine has özelliklere sahiptir. Ürünlerin price, stock gibi kendine has özellikleri olur.
+    # Kendine has olduğu için alt sınıfa yazılır, override edilir. 
+    #* Parenttan gelen özellikleri çağırmak için super() fonksiyonu kullanılır.
+
     def __init__(self, name, description, price: float, stock: int):
-        super().__init__(name, description)
+        super().__init__(name, description) #Parenttaki init'i çağırdık ve üzerine ekledik, override ettik.
         self.price = price
         self.stock = stock
 
-#* Product yani ürün `price` ve `stock` gibi kendine has özelliklere sahiptir.
-#* Parent'taki `__init__` yetersiz kalır.
-#* Bu durumda `__init__` override edilir. `super()` ile isim ve açıklama alınır; fiyat ve stok manuel eklenir. 
-#* `show_info` metodu da bu yeni bilgileri gösterecek şekilde güncellenir.
-
     def show_info(self):
-        super().show_info()
+        super().show_info() #Parenttaki show_info'yu çağırdık ve üzerine ekledik, override ettik.
         print(
             f'Price: {self.price}\n'
             f'Stock: {self.stock}'
         )
 
-p1 = Product(name='Boxing Gloves', description='Boxing Gloves', price=10.999, stock=100)
+p1 = Product(
+    name='Boxing Gloves', 
+    description='Boxing Gloves', 
+    price=10.999, 
+    stock=100)
 p1.show_info()
 #endregion
 
+#region Replace
 #? 2. Replace (Geçersiz Kılma/Ezme)
 #* Ata sınıftan gelen metodun tamamen yok sayılıp, yerine yepyeni bir logic yazılmasıdır.
 
-#region Case Study: Phones (BasePhone)
 class BasePhone: #BasePhone (Parent)
     def __init__(self, phone_id: str, model: str, brand: str, price: float):
         self.phone_id = phone_id
@@ -72,103 +69,80 @@ class BasePhone: #BasePhone (Parent)
         )
     
     def phone_ring_sound(self) -> str: #Fonksiyonumuz
-        return 'genel telefon sesi'
+        return 'Genel telefon sesi'
 
-# class Iphone(BasePhone):
-#     def __init__(self, airdrop: str, phone_id: str, model: str, brand: str, price: float):
-#         super().__init__(phone_id, model, brand, price)
-#         self.airdrop = airdrop
+class Iphone(BasePhone): #Parent Class: BasePhone
+
+    def __init__(self, airdrop: str, phone_id, model, brand, price): #airdrop yok diğer cihazlarda ondan bunu ekledik.
+        super().__init__(phone_id, model, brand, price) #Parenttaki initi çağırıp override ettik.
+        self.airdrop = airdrop
+
+    def show_info(self):
+        super().show_info()
+        print(f'Airdrop: {self.airdrop}')
+
+    def phone_ring_sound(self): #ezdik. iphone için farklı bir tanımlama yaptık.
+        return "iPhone telefon sesi"
+
+class Samsung(BasePhone):
     
-#     def show_info(self):
-#         super().show_info()
-#         print(f'Airdrop: {self.airdrop}')
+    def __init__(self, phone_id, model, brand, price, OS: str): #Samsungun kendine has yeteneği OS olsun
+        super().__init__(phone_id, model, brand, price)
+        self.OS = OS
+
+    def show_info(self):
+        super().show_info()
+        print(f"Operating System: {self.OS}")
+
+    def phone_ring_sound(self):
+        return "Samsung telefon sesi"
     
-#     def phone_ring_sound(self):
-#         return 'Iphone telefon sesi'
+#* *Polymorphism Bağlantısı:* phone_ring_sound fonksiyonu: Base, iPhone ve Samsung sınıflarında aynı isme sahip olmasına rağmen üç farklı çıktı üretir. 
+#* Bu durum *Polymorphism* (Çok Biçimlilik) kavramının temelidir.
+#* Aynı fonksiyonun farklı sınıflarda farklı işler yapmasına *Polimorfizm (Çok Biçimlilik)* denir.
 
-# * **IPhone (Child):**
-# * `__init__` override edilir (`super` ile) -> `Airdrop` özelliği eklenir.
-# * `phone_ring_sound()` override edilir -> "iPhone telefon sesi" döndürür (Replace).
+samsung_1 = Samsung(phone_id=1, model='Galaxy 20', brand='Samsung', price=120.000, OS='Android')
+samsung_1.show_info()
+print(samsung_1.phone_ring_sound())
 
-# * **Samsung (Child):**
-# * `__init__` override edilir (`super` ile) -> `Operating System` özelliği eklenir.
-# * `phone_ring_sound()` override edilir -> "Samsung telefon sesi" döndürür (Replace).
-
-
-
-# class Samsung(BasePhone):
-#     def __init__(self, phone_id, model, brand, price, os: str):
-#         super().__init__(phone_id, model, brand, price)
-#         self.os = os
-
-#     def show_info(self):
-#         super().show_info()
-#         print(f'Operating System: {self.os}')
-    
-#     def phone_ring_sound(self):
-#         return 'samsung telefon sesi'
-    
-# samsung_1 = Samsung(phone_id=1, model='Galaxy 20', brand='Samsung', price=120.000, os='Android')
-# samsung_1.show_info()
-# print(samsung_1.phone_ring_sound())
-
-# iphone_1 = Iphone(phone_id=2, model='Pro 16 Max', brand='Iphone', price=200.000, airdrop='True')
-# iphone_1.show_info()
-# print(iphone_1.phone_ring_sound())
+iphone_1 = Iphone(phone_id=2, model='Pro 16 Max', brand='Iphone', price=200.000, airdrop='True')
+iphone_1.show_info()
+print(iphone_1.phone_ring_sound())
 
 #endregion
 
-# > **Polymorphism Bağlantısı:** `phone_ring_sound` metodu; Base, iPhone ve Samsung sınıflarında aynı isme sahip olmasına rağmen üç farklı çıktı üretir. Bu durum **Polymorphism** (Çok Biçimlilik) kavramının temelidir.
+#todo Fatura Hesaplama (Bill System)
 
-# ---
+# BaseBill (Parent)
+# Attributes: bill_name, value_added_tax (KDV)
+# calculate_bill(amount): Vergili tutarı hesaplar.
+# create_log(): Fatura detaylarını `.txt` dosyasına yazar.
+# Child Classes: WaterBill (mill object attribute), NaturalGasBill (m3 object attribute), ElectricityBill (kw object attribute)
 
-#todo ## Uygulama: Fatura Hesaplama (Bill System)
+class BaseBill:
+    def __init__(self, bill_name: str, value_added_tax: float, amount: float):
+        self.bill_name = bill_name
+        self.value_added_tax = value_added_tax
+        self.amount = amount
 
-# Verilen ödev/pratik senaryosunun analizi:
+    def calculate_bill(self):
+        return self.value_added_tax * self.amount
 
-# ### Class Structure
+    def create_log(self):
+        file = open(file='bill_info.txt', mode='w', encoding='utf-8') #Yaratıcı dosyaya isim verdik, mode verdik (yazma amaçlı ondan write'in w'si)
+        # Burdaki encoding de TR karakterlere duyarlı olması için
+        file.write(f"Bill name: {self.bill_name}"\n
+                   f"Total amount: {self.amount}"\n
+                   f"Payment date: {self.value_added_tax}"))
+        file.close()
 
-# 1. **BaseBill (Parent):**
-# * **Attributes:** `bill_name`, `value_added_tax` (KDV).
-# * **Methods:**
-# * `calculate_bill(amount)`: Vergili tutarı hesaplar.
-# * `create_log()`: Fatura detaylarını `.txt` dosyasına yazar.
+# Override Edilmeyen: create_log çünkü su, gaz veya elektrik faturası fark etmeksizin loglama işlemi (isim ve tutar yazma) standarttır.
+# Override Edilen: __init__ ve calculate_bill
+# Her faturanın birimi farklıdır. Bu birimler __init__ içinde tanımlanmalı ve hesaplama (calculate_bill) bu birimlere göre özelleştirilmelidir.
 
+class WaterBill(BaseBill):
+    def __init__(self, bill_name, value_added_tax, amount):
+        super().__init__(bill_name, value_added_tax, amount)
 
-
-
-# 2. **Child Classes:** `WaterBill`, `NaturalGas`, `Electricity`.
-
-# ### Logic Analysis
-
-# * **Override Edilmeyenler:** `create_log`. Çünkü su, gaz veya elektrik faturası fark etmeksizin loglama işlemi (isim ve tutar yazma) standarttır.
-# * **Override Edilenler:** `__init__` ve `calculate_bill`.
-# * Her faturanın birimi farklıdır (`mill`, `m3`, `kw`).
-# * Bu birimler `__init__` içinde tanımlanmalı ve hesaplama (`calculate_bill`) bu birimlere göre özelleştirilmelidir.
-
-
-
-# ---
-
-# ## Kariyer ve ML Ops Tavsiyeleri
-
-# Eğitmenin sektör deneyimlerine dayalı kritik tavsiyeler:
-
-# ### Essential Skill Set (Olmazsa Olmazlar)
-
-# Sadece kod yazmak veya algoritma bilmek yeterli değildir. İK filtrelerini geçmek ve mülakatlarda ayrışmak için şu teknolojiler "cephaneliğe" eklenmelidir:
-
-# * **ML Ops:** Modeli canlıya aldıktan sonra izleme (monitoring), uyarı sistemleri (alerting) ve takip (tracking). Mülakatlarda en ayırt edici noktadır.
-# * **Containerization:** **Docker**.
-# * **Database:**
-# * SQL: **PostgreSQL**.
-# * NoSQL: **MongoDB**.
-
-
-# * **Cloud Providers:** AWS, Google Cloud, Azure (İlanların çoğunda bulunur).
-
-# ### Öğrenme Stratejisi
-
-# * **GitBook:** Okunanları kendi cümlelerinizle not alın. ("Kendi yazdığınız bilgi, en hızlı hatırladığınız bilgidir.")
-# * **GitHub:** Sadece kod depolamak için değil, teknik yetkinliği kanıtlamak için repolar oluşturun (OOP, AI, ML projeleri).
-# * **Keywords:** LinkedIn profilinde ve CV'de RAG, LLM, Fine Tuning, PyTorch, Transformer gibi teknik terimlerin geçmesi, İK algoritmalarına takılmamak için kritiktir.
+    def calculate_bill(self, unit):
+        return super().calculate_bill(unit)

@@ -152,11 +152,13 @@ Adım Adım Bellekte Ne Oluyor?
 
 ## Modülden Fonksiyon Çağırma
 
+```python
 from random import randint
+```
 
 Bu fonksiyon python içinde tanımlıdır ancak direkt kullanılamaz, kullanılmak istenildiğinde import edilmeli.
 
-> **import random** -> olduğu gibi modülü importlar
+> **import random** -> olduğu gibi modülü importlar.
 > **from random import randint** -> burada ise random modülünden sadece randint fonksiyonu impotlanır, yani daha az maliyetli.
 
 * Bir modülden 1-2 fonksiyon çağırılacaksa spesifik olarak fonksiyonları çağırmak daha doğru çünkü daha az maliyetli.
