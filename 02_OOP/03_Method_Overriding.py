@@ -119,6 +119,8 @@ print(iphone_1.phone_ring_sound())
 # create_log(): Fatura detaylarını `.txt` dosyasına yazar.
 # Child Classes: WaterBill (mill object attribute), NaturalGasBill (m3 object attribute), ElectricityBill (kw object attribute)
 
+from datetime import datetime
+
 class BaseBill:
     def __init__(self, bill_name: str, value_added_tax: float, amount: float):
         self.bill_name = bill_name
@@ -131,18 +133,54 @@ class BaseBill:
     def create_log(self):
         file = open(file='bill_info.txt', mode='w', encoding='utf-8') #Yaratıcı dosyaya isim verdik, mode verdik (yazma amaçlı ondan write'in w'si)
         # Burdaki encoding de TR karakterlere duyarlı olması için
-        file.write(f"Bill name: {self.bill_name}"\n
-                   f"Total amount: {self.amount}"\n
-                   f"Payment date: {self.value_added_tax}"))
-        file.close()
+        file.write(f"Bill name: {self.bill_name}\n"
+                   f"Total amount: {self.calculate_bill()}\n"
+                   f"Payment date: {datetime.now()}\n"
+                   f"-----------------------------")
 
 # Override Edilmeyen: create_log çünkü su, gaz veya elektrik faturası fark etmeksizin loglama işlemi (isim ve tutar yazma) standarttır.
 # Override Edilen: __init__ ve calculate_bill
 # Her faturanın birimi farklıdır. Bu birimler __init__ içinde tanımlanmalı ve hesaplama (calculate_bill) bu birimlere göre özelleştirilmelidir.
 
 class WaterBill(BaseBill):
-    def __init__(self, bill_name, value_added_tax, amount):
+    def __init__(self, bill_name: str, value_added_tax: float, amount: float, mill: int): #atadan gelenler dışında mill ekledik.
         super().__init__(bill_name, value_added_tax, amount)
+        self.mill = mill #mill değerini ekledik.
 
-    def calculate_bill(self, unit):
-        return super().calculate_bill(unit)
+    # 1. yöntem
+    def calculate_bill(self):
+        return super().calculate_bill() * self.mill
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+class NaturalGasBill(BaseBill):
+    def __init__(self, bill_name, value_added_tax, amount: float, m3: float):
+        super().__init__(bill_name, value_added_tax, amount)
+        self.m3 = m3
+
+    # 2. yöntem
+    def calculate_bill(self):
+        super().calculate_bill()
+        return self.value_added_tax * self.amount * self.m3
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+class ElectricityBill(BaseBill):
+    def __init__(self, bill_name, value_added_tax, amount, kw):
+        super().__init__(bill_name, value_added_tax, amount)
+        self.kw = kw
+    
+    def calculate_bill(self):
+        return super().calculate_bill() * self.kw
+    
+
+water_bill_1 = WaterBill(bill_name="ISKI", value_added_tax=25.5, amount=45.7, mill=100)
+water_bill_1.create_log()
+
+# Bu mimariyi kurmak "maintenance" süresini azaltır. 
+# İlk başta yazmak uzun sürebilir amma velakin yeni bir şey eklemek çok kolaylaşır. 
+# Örneğin, sisteme yeni bir elektrik dağıtım şirketi dahil olduğunda yapılması gereken tek şey; sınıfı kopyalayıp adını değiştirmek ve gerekli attribute'leri eklemektir. 
+# Bu işlem sadece bir dakika sürer. Proje büyüdükçe bu prensiplerin önemi daha da artar. 
+
+natural_gas_1 = NaturalGasBill(bill_name="IGDAŞ", value_added_tax=45.6, amount=89.9, m3=120)
+natural_gas_1.create_log()
